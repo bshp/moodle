@@ -93,6 +93,10 @@ abstract class quiz_access_rule_base {
     public function prevent_access() {
         return false;
     }
+	
+    public function prevent_review_access() {
+        return false;
+    }
 
     /**
      * @param int|null $attemptid the id of the current attempt, if there is one,
