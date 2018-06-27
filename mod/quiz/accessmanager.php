@@ -344,6 +344,14 @@ class quiz_access_manager {
         }
         return $reasons;
     }
+	
+	public function prevent_review_access() {
+		$reasons = array();
+		foreach ($this->rules as $rule) {
+			$reasons = $this->accumulate_messages($reasons, $rule->prevent_review_access());
+		}
+		return $reasons;
+	}
 
     /**
      * @param int|null $attemptid the id of the current attempt, if there is one,
