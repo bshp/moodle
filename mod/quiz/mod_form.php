@@ -287,6 +287,12 @@ class mod_quiz_mod_form extends moodleform_mod {
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'security', get_string('extraattemptrestrictions', 'quiz'));
 
+        // Prevent review access.
+        $mform->addElement('selectyesno', 'preventreviewaccess', get_string('preventreviewaccess', 'quiz'));
+        $mform->addHelpButton('preventreviewaccess', 'preventreviewaccess', 'quiz');
+        $mform->setAdvanced('preventreviewaccess', $quizconfig->preventreviewaccess_adv);
+        $mform->setDefault('preventreviewaccess', $quizconfig->preventreviewaccess);
+
         // Require password to begin quiz attempt.
         $mform->addElement('passwordunmask', 'quizpassword', get_string('requirepassword', 'quiz'));
         $mform->setType('quizpassword', PARAM_TEXT);

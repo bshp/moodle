@@ -180,6 +180,11 @@ if ($ADMIN->fulltree) {
             get_string('showblocks', 'quiz'), get_string('configshowblocks', 'quiz'),
             array('value' => 0, 'adv' => true)));
 
+    // Prevent review access.
+    $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/preventreviewaccess',
+        get_string('preventreviewaccess', 'quiz'), get_string('configpreventreviewaccess', 'quiz'),
+        array('value' => 0, 'adv' => true)));
+
     // Password.
     $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/password',
             get_string('requirepassword', 'quiz'), get_string('configrequirepassword', 'quiz'),
