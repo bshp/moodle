@@ -64,9 +64,7 @@ $accessmanager->setup_attempt_page($PAGE);
 $messages = $accessmanager->prevent_review_access();
 $canreview = $attemptobj->get_quiz()->preventreviewaccess;
 if (!$attemptobj->is_preview_user() && $messages && $canreview == '1') {
-    //Our original quick fix, not UX friendly, show a better message and autoclose
-    $accessmanager->back_to_view_page($PAGE->get_renderer('mod_quiz'),
-        'You cannot review at this time, please check with your instructor');
+    $accessmanager->back_to_view_page($PAGE->get_renderer('mod_quiz'), implode(", ", $messages));
 }
 
 $options = $attemptobj->get_display_options(true);
