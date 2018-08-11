@@ -60,10 +60,10 @@ $attemptobj->check_review_capability();
 $accessmanager = $attemptobj->get_access_manager(time());
 $accessmanager->setup_attempt_page($PAGE);
 
-// BSHP specific, lock-down review if restrictions are set
+// Check if review is restricted and if it is allowed by rule
 $messages = $accessmanager->prevent_review_access();
-$canreview = $attemptobj->get_quiz()->preventreviewaccess;
-if (!$attemptobj->is_preview_user() && $messages && $canreview == '1') {
+$restrictedreview = $attemptobj->get_quiz()->preventreviewaccess;
+if (!$attemptobj->is_preview_user() && $messages && $restrictedreview == '1') {
     $accessmanager->back_to_view_page($PAGE->get_renderer('mod_quiz'), implode(", ", $messages));
 }
 
