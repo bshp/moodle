@@ -105,17 +105,44 @@ class field_controller extends \core_customfield\field_controller {
             $errors['configdata[displaysize]'] = get_string('errorconfigdisplaysize', 'customfield_text');
         }
 
-        $link = $data['configdata']['link'];
-        if (strlen($link)) {
-            require_once($CFG->dirroot . '/lib/validateurlsyntax.php');
-            if (strpos($link, '$$') === false) {
-                $errors['configdata[link]'] = get_string('errorconfiglinkplaceholder', 'customfield_text');
-            } else if (!validateUrlSyntax(str_replace('$$', 'XYZ', $link), 's+H?S?F-E-u-P-a?I?p?f?q?r?')) {
-                // This validation is more strict than PARAM_URL - it requires the protocol and it must be either http or https.
-                $errors['configdata[link]'] = get_string('errorconfigdisplaysize', 'customfield_text');
+        if (isset($data['configdata']['link'])) {
+            $link = $data['configdata']['link'];
+            if (strlen($link)) {
+                require_once($CFG->dirroot . '/lib/validateurlsyntax.php');
+                if (strpos($link, '$$') === false) {
+                    $errors['configdata[link]'] = get_string('errorconfiglinkplaceholder', 'customfield_text');
+                } else if (!validateUrlSyntax(str_replace('$$', 'XYZ', $link), 's+H?S?F-E-u-P-a?I?p?f?q?r?')) {
+                    // This validation is more strict than PARAM_URL - it requires the protocol and it must be either http or https.
+                    $errors['configdata[link]'] = get_string('errorconfigdisplaysize', 'customfield_text');
+                }
             }
         }
 
         return $errors;
+    }
+
+    /**
+     * Does this custom field type support being used as part of the block_myoverview
+     * custom field grouping?
+     * @return bool
+     */
+    public function supports_course_grouping(): bool {
+        return true;
+    }
+
+    /**
+     * If this field supports course grouping, then this function needs overriding to
+     * return the formatted values for this.
+     * @param array $values the used values that need formatting
+     * @return array
+     */
+    public function course_grouping_format_values($values): array {
+        $ret = [];
+        foreach ($values as $value) {
+            $ret[$value] = format_string($value);
+        }
+        $ret[BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY] = get_string('nocustomvalue', 'block_myoverview',
+            $this->get_formatted_name());
+        return $ret;
     }
 }

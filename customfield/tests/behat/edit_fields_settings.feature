@@ -71,7 +71,7 @@ Feature: Teachers can edit course custom fields
       | Field 5               | b            |
     And I log out
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Use images in the custom field description
     When I log in as "admin"
     And I follow "Manage private files"
@@ -101,14 +101,14 @@ Feature: Teachers can edit course custom fields
     When I log in as "admin"
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field |
     And I press "Save changes"
     Then I should see "You must supply a value here" in the "Short name" "form_row"
     And I set the field "Short name" to "short name"
     And I press "Save changes"
-    And I should see "Short name can only contain lowercase latin letters, digits and an underscore sign" in the "Short name" "form_row"
+    And I should see "The short name can only contain alphanumeric lowercase characters and underscores (_)." in the "Short name" "form_row"
     And I set the field "Short name" to "f1"
     And I press "Save changes"
     And I should see "Short name already exists" in the "Short name" "form_row"

@@ -81,17 +81,6 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'blocksettings', $hassiteconfig);
     }
 
-    // message outputs
-    $ADMIN->add('modules', new admin_category('messageoutputs', new lang_string('messageoutputs', 'message')));
-    $ADMIN->add('messageoutputs', new admin_page_managemessageoutputs());
-    $ADMIN->add('messageoutputs', new admin_page_defaultmessageoutputs());
-    $plugins = core_plugin_manager::instance()->get_plugins_of_type('message');
-    core_collator::asort_objects_by_property($plugins, 'displayname');
-    foreach ($plugins as $plugin) {
-        /** @var \core\plugininfo\message $plugin */
-        $plugin->load_settings($ADMIN, 'messageoutputs', $hassiteconfig);
-    }
-
     // authentication plugins
     $ADMIN->add('modules', new admin_category('authsettings', new lang_string('authentication', 'admin')));
 
@@ -186,19 +175,12 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'antivirussettings', $hassiteconfig);
     }
 
-/// License types
-    $ADMIN->add('modules', new admin_category('licensesettings', new lang_string('licenses')));
-    $temp = new admin_settingpage('managelicenses', new lang_string('managelicenses', 'admin'));
-
-    require_once($CFG->libdir . '/licenselib.php');
-    $licenses = array();
-    $array = explode(',', $CFG->licenses);
-    foreach ($array as $value) {
-        $licenses[$value] = new lang_string($value, 'license');
+    // Machine learning backend plugins.
+    $ADMIN->add('modules', new admin_category('mlbackendsettings', new lang_string('mlbackendsettings', 'admin')));
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('mlbackend');
+    foreach ($plugins as $plugin) {
+        $plugin->load_settings($ADMIN, 'mlbackendsettings', $hassiteconfig);
     }
-    $temp->add(new admin_setting_configselect('sitedefaultlicense', new lang_string('configsitedefaultlicense','admin'), new lang_string('configsitedefaultlicensehelp','admin'), 'allrightsreserved', $licenses));
-    $temp->add(new admin_setting_managelicenses());
-    $ADMIN->add('licensesettings', $temp);
 
 /// Filter plugins
     $ADMIN->add('modules', new admin_category('filtersettings', new lang_string('managefilters')));
@@ -576,14 +558,18 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configduration('searchindextime',
             new lang_string('searchindextime', 'admin'), new lang_string('searchindextime_desc', 'admin'),
             600));
+    $temp->add(new admin_setting_heading('searchcoursesheading', new lang_string('searchablecourses', 'admin'), ''));
     $options = [
         0 => new lang_string('searchallavailablecourses_off', 'admin'),
         1 => new lang_string('searchallavailablecourses_on', 'admin')
     ];
     $temp->add(new admin_setting_configselect('searchallavailablecourses',
             new lang_string('searchallavailablecourses', 'admin'),
-            new lang_string('searchallavailablecourses_desc', 'admin'),
+            new lang_string('searchallavailablecoursesdesc', 'admin'),
             0, $options));
+    $temp->add(new admin_setting_configcheckbox('searchincludeallcourses',
+        new lang_string('searchincludeallcourses', 'admin'), new lang_string('searchincludeallcourses_desc', 'admin'),
+        0));
 
     // Search display options.
     $temp->add(new admin_setting_heading('searchdisplay', new lang_string('searchdisplay', 'admin'), ''));
@@ -654,6 +640,19 @@ if ($hassiteconfig) {
     foreach ($plugins as $plugin) {
         /** @var \core\plugininfo\calendartype $plugin */
         $plugin->load_settings($ADMIN, 'calendartype', $hassiteconfig);
+    }
+}
+
+// Content bank content types.
+if ($hassiteconfig) {
+    $ADMIN->add('modules', new admin_category('contenbanksettings', new lang_string('contentbank')));
+    $temp = new admin_settingpage('managecontentbanktypes', new lang_string('managecontentbanktypes'));
+    $temp->add(new admin_setting_managecontentbankcontenttypes());
+    $ADMIN->add('contenbanksettings', $temp);
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('contenttype');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\contentbank $plugin */
+        $plugin->load_settings($ADMIN, 'contenbanksettings', $hassiteconfig);
     }
 }
 

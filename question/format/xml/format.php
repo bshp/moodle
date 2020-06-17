@@ -240,7 +240,7 @@ class qformat_xml extends qformat_default {
 
         // Restore files in generalfeedback.
         $generalfeedback = $this->import_text_with_files($question,
-                array('#', 'generalfeedback', 0), $qo->generalfeedback, $this->get_format($qo->questiontextformat));
+                array('#', 'generalfeedback', 0), '', $this->get_format($qo->questiontextformat));
         $qo->generalfeedback = $generalfeedback['text'];
         $qo->generalfeedbackformat = $generalfeedback['format'];
         if (!empty($generalfeedback['itemid'])) {
@@ -439,6 +439,8 @@ class qformat_xml extends qformat_default {
         $qo->answernumbering = $this->getpath($question,
                 array('#', 'answernumbering', 0, '#'), 'abc');
         $qo->shuffleanswers = $this->trans_single($shuffleanswers);
+        $qo->showstandardinstruction = $this->getpath($question,
+            array('#', 'showstandardinstruction', 0, '#'), '1');
 
         // There was a time on the 1.8 branch when it could output an empty
         // answernumbering tag, so fix up any found.
@@ -475,6 +477,11 @@ class qformat_xml extends qformat_default {
         $questiontext = $this->import_text_with_files($question,
                 array('#', 'questiontext', 0));
         $qo = qtype_multianswer_extract_question($questiontext);
+        $errors = qtype_multianswer_validate_question($qo);
+        if ($errors) {
+            $this->error(get_string('invalidmultianswerquestion', 'qtype_multianswer', implode(' ', $errors)));
+            return null;
+        }
 
         // Header parts particular to multianswer.
         $qo->qtype = 'multianswer';
@@ -483,8 +490,12 @@ class qformat_xml extends qformat_default {
         if (isset($this->course)) {
             $qo->course = $this->course;
         }
-
-        $qo->name = $this->clean_question_name($this->import_text($question['#']['name'][0]['#']['text']));
+        if (isset($question['#']['name'])) {
+            $qo->name = $this->clean_question_name($this->import_text($question['#']['name'][0]['#']['text']));
+        } else {
+            $qo->name = $this->create_default_question_name($qo->questiontext['text'],
+                    get_string('questionname', 'question'));
+        }
         $qo->questiontextformat = $questiontext['format'];
         $qo->questiontext = $qo->questiontext['text'];
         if (!empty($questiontext['itemid'])) {
@@ -514,7 +525,7 @@ class qformat_xml extends qformat_default {
 
         // Restore files in generalfeedback.
         $generalfeedback = $this->import_text_with_files($question,
-                array('#', 'generalfeedback', 0), $qo->generalfeedback, $this->get_format($qo->questiontextformat));
+                array('#', 'generalfeedback', 0), '', $this->get_format($qo->questiontextformat));
         $qo->generalfeedback = $generalfeedback['text'];
         $qo->generalfeedbackformat = $generalfeedback['format'];
         if (!empty($generalfeedback['itemid'])) {
@@ -926,6 +937,7 @@ class qformat_xml extends qformat_default {
             // The import should have the format in human readable form, so translate to machine readable format.
             $qo->infoformat = $this->trans_format($question['#']['info'][0]['@']['format']);
         }
+        $qo->idnumber = $this->getpath($question, array('#', 'idnumber', 0, '#'), null);
         return $qo;
     }
 
@@ -937,7 +949,7 @@ class qformat_xml extends qformat_default {
      * @param stdClass $context
      * @return array (of objects) question objects.
      */
-    protected function readquestions($lines) {
+    public function readquestions($lines) {
         // We just need it as one big string.
         $lines = implode('', $lines);
 
@@ -1196,6 +1208,7 @@ class qformat_xml extends qformat_default {
             $expout .= "    <info {$infoformat}>\n";
             $expout .= "      {$categoryinfo}";
             $expout .= "    </info>\n";
+            $expout .= "    <idnumber>{$question->idnumber}</idnumber>\n";
             $expout .= "  </question>\n";
             return $expout;
         }
@@ -1244,7 +1257,9 @@ class qformat_xml extends qformat_default {
                         $this->get_single($question->options->shuffleanswers) .
                         "</shuffleanswers>\n";
                 $expout .= "    <answernumbering>" . $question->options->answernumbering .
-                        "</answernumbering>\n";
+                    "</answernumbering>\n";
+                $expout .= "    <showstandardinstruction>" . $question->options->showstandardinstruction .
+                    "</showstandardinstruction>\n";
                 $expout .= $this->write_combined_feedback($question->options, $question->id, $question->contextid);
                 $expout .= $this->write_answers($question->options->answers);
                 break;

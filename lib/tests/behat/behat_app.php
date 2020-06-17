@@ -85,6 +85,10 @@ class behat_app extends behat_base {
         $this->getSession()->restart();
         $this->resize_window('360x720', true);
 
+        if (empty($this->ionicurl)) {
+            $this->ionicurl = $this->start_or_reuse_ionic();
+        }
+
         // Go to page and prepare browser for app.
         $this->prepare_browser($this->ionicurl);
     }
@@ -241,6 +245,7 @@ class behat_app extends behat_base {
             // the process.
             self::$ionicrunning = (object)['url' => $url, 'process' => $process, 'pipes' => $pipes,
                     'pid' => $pid];
+            $url = self::$ionicrunning->url;
         }
         return $url;
     }
@@ -289,7 +294,7 @@ class behat_app extends behat_base {
                         }
                     }
                     throw new DriverException('Moodle app not found in browser');
-                }, false, 30);
+                }, false, 60);
 
         // Run the scripts to install Moodle 'pending' checks.
         $this->getSession()->executeScript(
@@ -298,21 +303,31 @@ class behat_app extends behat_base {
         // Wait until the site login field appears OR the main page.
         $situation = $this->spin(
                 function($context, $args) {
-                    $input = $context->getSession()->getPage()->find('xpath', '//input[@name="url"]');
-                    if ($input) {
+                    $page = $context->getSession()->getPage();
+
+                    $element = $page->find('xpath', '//page-core-login-site//input[@name="url"]');
+                    if ($element) {
+                        // Wait for the onboarding modal to open, if any.
+                        $this->wait_for_pending_js();
+                        $element = $page->find('xpath', '//page-core-login-site-onboarding');
+                        if ($element) {
+                            $this->i_press_in_the_app('Skip');
+                        }
+
                         return 'login';
                     }
-                    $mainmenu = $context->getSession()->getPage()->find('xpath', '//page-core-mainmenu');
-                    if ($mainmenu) {
+
+                    $element = $page->find('xpath', '//page-core-mainmenu');
+                    if ($element) {
                         return 'mainpage';
                     }
                     throw new DriverException('Moodle app login URL prompt not found');
-                }, self::EXTENDED_TIMEOUT, 30);
+                }, behat_base::get_extended_timeout(), 60);
 
         // If it's the login page, we automatically fill in the URL and leave it on the user/pass
         // page. If it's the main page, we just leave it there.
         if ($situation === 'login') {
-            $this->i_set_the_field_in_the_app('Site address', $CFG->wwwroot);
+            $this->i_set_the_field_in_the_app('campus.example.edu', $CFG->wwwroot);
             $this->i_press_in_the_app('Connect!');
         }
 
@@ -523,5 +538,16 @@ class behat_app extends behat_base {
         }
         $this->getSession()->getDriver()->executeScript('window.close()');
         $this->getSession()->switchToWindow($names[0]);
+    }
+
+    /**
+     * Switch navigator online mode.
+     *
+     * @Given /^I switch offline mode to "(?P<offline_string>(?:[^"]|\\")*)"$/
+     * @param string $offline New value for navigator online mode
+     * @throws DriverException If the navigator.online mode is not available
+     */
+    public function i_switch_offline_mode(string $offline) {
+        $this->getSession()->evaluateScript('appProvider.setForceOffline(' . $offline . ');');
     }
 }

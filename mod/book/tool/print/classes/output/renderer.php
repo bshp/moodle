@@ -183,8 +183,6 @@ class renderer extends plugin_renderer_base {
      * @return array The array containing the content of the book chapter and visibility information
      */
     public function render_print_book_chapter($chapter, $chapters, $book, $cm) {
-        global $OUTPUT;
-
         $context = context_module::instance($cm->id);
         $title = book_get_chapter_title($chapter->id, $chapters, $book, $context);
 
@@ -194,13 +192,15 @@ class renderer extends plugin_renderer_base {
         $bookchapter .= html_writer::start_div('book_chapter p-t-1', ['id' => 'ch' . $chapter->id]);
         if (!$book->customtitles) {
             if (!$chapter->subchapter) {
-                $bookchapter .= $OUTPUT->heading($title, 2, 'text-center p-b-2');
+                $bookchapter .= $this->output->heading($title, 2, 'text-center p-b-2');
             } else {
-                $bookchapter .= $OUTPUT->heading($title, 3, 'text-center p-b-2');
+                $bookchapter .= $this->output->heading($title, 3, 'text-center p-b-2');
             }
         }
 
-        $bookchapter .= format_text($chapter->content, $chapter->contentformat, array('noclean' => true, 'context' => $context));
+        $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id,
+            'mod_book', 'chapter', $chapter->id);
+        $bookchapter .= format_text($chaptertext, $chapter->contentformat, array('noclean' => true, 'context' => $context));
         $bookchapter .= html_writer::end_div();
 
         return array($bookchapter, $chaptervisible);

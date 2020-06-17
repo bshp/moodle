@@ -25,6 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'customfield_date';
-$plugin->version   = 2018120300;
-$plugin->requires  = 2018122000;
+$plugin->version   = 2020061500;
+$plugin->requires  = 2020060900;
 

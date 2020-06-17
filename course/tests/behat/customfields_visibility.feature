@@ -23,7 +23,7 @@ Feature: The visibility of fields control where they are displayed
     When I log in as "admin"
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field |
       | Short name | testfield  |
@@ -43,11 +43,11 @@ Feature: The visibility of fields control where they are displayed
     When I log in as "admin"
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field  |
       | Short name | testfield   |
-      | Visible to | Not visible |
+      | Visible to | Nobody      |
     And I press "Save changes"
     And I log out
     When I log in as "teacher1"
@@ -63,11 +63,11 @@ Feature: The visibility of fields control where they are displayed
     When I log in as "admin"
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
-    And I click on "Text field" "link"
+    And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field     |
       | Short name | testfield      |
-      | Visible to | Course editors |
+      | Visible to | Teachers       |
     And I press "Save changes"
     And I log out
     When I log in as "teacher1"

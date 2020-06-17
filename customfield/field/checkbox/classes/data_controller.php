@@ -55,10 +55,13 @@ class data_controller extends \core_customfield\data_controller {
         $field = $this->get_field();
         $config = $field->get('configdata');
         $elementname = $this->get_form_element_name();
-        $mform->addElement('advcheckbox', $elementname, $this->get_field()->get_formatted_name());
+        // If checkbox is required (i.e. "agree to terms") then use 'checkbox' form element.
+        // The advcheckbox element cannot be used for required fields because advcheckbox elements always provide a value.
+        $isrequired = $field->get_configdata_property('required');
+        $mform->addElement($isrequired ? 'checkbox' : 'advcheckbox', $elementname, $this->get_field()->get_formatted_name());
         $mform->setDefault($elementname, $config['checkbydefault']);
         $mform->setType($elementname, PARAM_BOOL);
-        if ($field->get_configdata_property('required')) {
+        if ($isrequired) {
             $mform->addRule($elementname, null, 'required', null, 'client');
         }
     }

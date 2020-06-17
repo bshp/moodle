@@ -95,7 +95,7 @@ if ($previewid) {
     }
 
     $slot = $quba->get_first_question_number();
-    $usedquestion = $quba->get_question($slot);
+    $usedquestion = $quba->get_question($slot, false);
     if ($usedquestion->id != $question->id) {
         print_error('questionidmismatch', 'question');
     }
@@ -279,6 +279,10 @@ if (question_has_capability_on($question, 'view')) {
     echo html_writer::link(question_get_export_single_question_url($question),
             get_string('exportonequestion', 'question'));
 }
+
+// Log the preview of this question.
+$event = \core\event\question_viewed::create_from_question_instance($question, $context);
+$event->trigger();
 
 // Display the settings form.
 $optionsform->display();
