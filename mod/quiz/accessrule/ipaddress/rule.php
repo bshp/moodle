@@ -52,4 +52,9 @@ class quizaccess_ipaddress extends quiz_access_rule_base {
             return get_string('subnetwrong', 'quizaccess_ipaddress');
         }
     }
+    
+    public function prevent_review_access() {
+        return $this->prevent_access();
+    }
+    
 }

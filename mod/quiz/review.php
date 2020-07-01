@@ -60,6 +60,12 @@ $attemptobj->check_review_capability();
 $accessmanager = $attemptobj->get_access_manager(time());
 $accessmanager->setup_attempt_page($PAGE);
 
+// BSHP specific, lock-down review if restrictions are set
+$messages = $accessmanager->prevent_review_access();
+if (!$attemptobj->is_preview_user() && $messages) {
+    $accessmanager->back_to_view_page($PAGE->get_renderer('mod_quiz'), implode(", ", $messages));
+}
+
 $options = $attemptobj->get_display_options(true);
 
 // Check permissions - warning there is similar code in reviewquestion.php and

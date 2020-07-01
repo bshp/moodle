@@ -344,6 +344,10 @@ class quiz_access_manager {
         }
         return $reasons;
     }
+    
+    public function prevent_review_access() {
+        return $this->prevent_access();
+    }
 
     /**
      * @param int|null $attemptid the id of the current attempt, if there is one,
