@@ -76,7 +76,7 @@ class restore_course_task extends restore_task {
             }
         }
 
-        $this->add_step(new restore_course_legacy_files_step('legacy_files'));
+        //$this->add_step(new restore_course_legacy_files_step('legacy_files'));
 
         // Deal with enrolment methods and user enrolments.
         if ($this->plan->get_mode() == backup::MODE_IMPORT) {
