@@ -389,7 +389,7 @@ class backup_course_structure_step extends backup_structure_step {
             'shortname', 'fullname', 'idnumber',
             'summary', 'summaryformat', 'format', 'showgrades',
             'newsitems', 'startdate', 'enddate',
-            'marker', 'maxbytes', 'legacyfiles', 'showreports',
+            'marker', 'maxbytes', 'showreports',
             'visible', 'groupmode', 'groupmodeforce',
             'defaultgroupingid', 'lang', 'theme',
             'timecreated', 'timemodified',
@@ -488,7 +488,7 @@ class backup_course_structure_step extends backup_structure_step {
 
         $course->annotate_files('course', 'summary', null);
         $course->annotate_files('course', 'overviewfiles', null);
-        $course->annotate_files('course', 'legacy', null);
+        //$course->annotate_files('course', 'legacy', null);
 
         // Return root element ($course)
 
