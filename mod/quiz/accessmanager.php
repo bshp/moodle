@@ -346,7 +346,11 @@ class quiz_access_manager {
     }
     
     public function prevent_review_access() {
-        return $this->prevent_access();
+        $reasons = array();
+        foreach ($this->rules as $rule) {
+            $reasons = $this->accumulate_messages($reasons, $rule->prevent_review_access());
+        }
+        return $reasons;
     }
 
     /**
