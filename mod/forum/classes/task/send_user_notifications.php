@@ -325,7 +325,18 @@ class send_user_notifications extends \core\task\adhoc_task {
         $eventdata->userfrom            = $author;
         $eventdata->userto              = $this->recipient;
         $eventdata->subject             = $postsubject;
-        $eventdata->fullmessage         = $this->get_renderer()->render($data);
+        //$eventdata->fullmessage         = $this->get_renderer()->render($data);
+        $eventdata->fullmessage         = $course->shortname . ' -> Forums -> ' . format_string($forum->name, true) . "\n"
+                                          . new \moodle_url('/mod/forum/discuss.php') . '?d=' . $discussion->id . '#p' . $post->id . "\n" 
+                                          . $postsubject. "\n" 
+                                          . 'by ' . fullname($author) . ' - ' . userdate($post->created) . "\n" 
+                                          . '---------------------------------------------------------------------' . "\n" 
+                                          . html_to_text($post->message) . "\n\n"
+                                          . '---------------------------------------------------------------------' . "\n" 
+                                          . 'This is a copy of a message posted in ' . $data->get_coursename() . '.' . "\n\n"
+                                          . 'To reply click on this link: ' . new \moodle_url('/mod/forum/post.php') . '?reply='  . $post->id . "\n"
+                                          . 'Change your forum digest preferences: ' . new \moodle_url('/mod/forum/index.php') . '?id=' . $course->id;
+
         $eventdata->fullmessageformat   = FORMAT_PLAIN;
         $eventdata->fullmessagehtml     = $this->get_renderer(true)->render($data);
         $eventdata->notification        = 1;
