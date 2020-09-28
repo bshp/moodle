@@ -327,13 +327,13 @@ class send_user_notifications extends \core\task\adhoc_task {
         $eventdata->subject             = $postsubject;
         //$eventdata->fullmessage         = $this->get_renderer()->render($data);
         $eventdata->fullmessage         = $course->shortname . ' -> Forums -> ' . format_string($forum->name, true) . "\n"
-                                          . new \moodle_url('/mod/forum/discuss.php') . '?d=' . $discussion->id . '#p' . $post->id . "\n" 
-                                          . $postsubject. "\n" 
+                                          . new \moodle_url('/mod/forum/discuss.php') . '?d=' . $discussion->id . '#p' . $post->id . "\n"
+                                          . $postsubject . "\n" 
                                           . 'by ' . fullname($author) . ' - ' . userdate($post->created) . "\n" 
                                           . '---------------------------------------------------------------------' . "\n" 
-                                          . html_to_text($post->message) . "\n\n"
+                                          . html_to_text($post->message) . "\n"
                                           . '---------------------------------------------------------------------' . "\n" 
-                                          . 'This is a copy of a message posted in ' . $data->get_coursename() . '.' . "\n\n"
+                                          . 'This is a copy of a message posted in ' . $course->shortname . '.' . "\n\n"
                                           . 'To reply click on this link: ' . new \moodle_url('/mod/forum/post.php') . '?reply='  . $post->id . "\n"
                                           . 'Change your forum digest preferences: ' . new \moodle_url('/mod/forum/index.php') . '?id=' . $course->id;
 
