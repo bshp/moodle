@@ -289,7 +289,7 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->disabledIf('instructorchoicesendemailaddr', 'typeid', 'in', $toolproxy);
 
         $mform->addElement('advcheckbox', 'instructorchoiceacceptgrades', '&nbsp;', ' ' . get_string('accept_grades', 'lti'));
-        $mform->setDefault('instructorchoiceacceptgrades', '1');
+        $mform->setDefault('instructorchoiceacceptgrades', '0');
         $mform->addHelpButton('instructorchoiceacceptgrades', 'accept_grades', 'lti');
         $mform->disabledIf('instructorchoiceacceptgrades', 'typeid', 'in', $toolproxy);
 
